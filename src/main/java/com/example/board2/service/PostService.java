@@ -7,6 +7,8 @@ import com.example.board2.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.example.board2.dto.PostResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,5 +69,33 @@ public class PostService {
                         .build())
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
     }
+
+    public List<PostResponseDto> getAllPosts() {
+        return postRepository.findAll().stream()
+                .map(post -> PostResponseDto.builder()
+                        .id(post.getPId())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .authorId(post.getAuthorId())
+                        .bNotice(post.getBNotice())
+                        .createdAt(post.getCreatedAt())
+                        .boardId(post.getBoard().getBId())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public Page<PostResponseDto> getAllPaged(Pageable pageable) {
+        return postRepository.findAll(pageable)
+                .map(post -> PostResponseDto.builder()
+                        .id(post.getPId())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .authorId(post.getAuthorId())
+                        .createdAt(post.getCreatedAt())
+                        .boardId(post.getBoard().getBId())
+                        .bNotice(post.getBNotice())
+                        .build());
+    }
+
 
 }

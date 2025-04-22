@@ -6,16 +6,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.board2.dto.PostResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<PostResponseDto>> getAllPaged(Pageable pageable) {
+        return ResponseEntity.ok(postService.getAllPaged(pageable));
+    }
 
     @PostMapping("/{boardId}")
     public ResponseEntity<Post> create(@PathVariable Long boardId, @RequestBody Post post) {
@@ -42,5 +49,12 @@ public class PostController {
     public ResponseEntity<PostResponseDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(postService.getById(id));
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<PostResponseDto>> getAllPosts() {
+        return ResponseEntity.ok(postService.getAllPosts());
+    }
+
+
 
 }
